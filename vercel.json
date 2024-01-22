@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "index.ts": {
+      "runtime": "nodejs12"
+    }
+  },
   "version": 2,
   "builds": [
     {
@@ -10,7 +15,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "index.js"
+      "dest": "/index.js"
     }
   ]
 }
