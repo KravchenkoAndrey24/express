@@ -1,5 +1,5 @@
 import request from "supertest";
-import { app, HTTP_STATUSES } from "../../src";
+import { app, HTTP_STATUSES, server } from "../../src";
 
 describe("/product", () => {
   beforeAll(async () => {
@@ -8,10 +8,9 @@ describe("/product", () => {
       .expect(HTTP_STATUSES.NO_CONTENT_204);
   });
 
-  afterAll(async () => {
-    await request(app)
-      .delete("/__test__/close-server")
-      .expect(HTTP_STATUSES.NO_CONTENT_204);
+  afterAll((done) => {
+    server.close();
+    done();
   });
 
   it("Should return HTTP_STATUSES.OK_200 and empty array", async () => {
