@@ -1,7 +1,17 @@
 import express from "express";
 import bodyParser from "body-parser";
 
-const app = express();
+export const app = express();
+
+export const HTTP_STATUSES = {
+  OK_200: 200,
+  CREATED_201: 201,
+  NO_CONTENT_204: 204,
+
+  BAD_REQUEST_400: 400,
+  NOT_FOUND_404: 404,
+};
+
 const port = process.env.PORT || 3000;
 
 const db = {
@@ -31,7 +41,7 @@ app.get("/products/:productId", (req, res) => {
   );
 
   if (!foundProduct) {
-    return res.send(404);
+    return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
   }
 
   res.json(foundProduct);
@@ -41,7 +51,9 @@ app.post("/products", (req, res) => {
   console.log(req);
 
   if (!req.body?.name) {
-    return res.status(404).json({ message: "Invalid name" });
+    return res
+      .status(HTTP_STATUSES.NOT_FOUND_404)
+      .json({ message: "Invalid name" });
   }
 
   const newProduct = {
@@ -50,14 +62,14 @@ app.post("/products", (req, res) => {
   };
   db.products.push(newProduct);
 
-  return res.status(201).json(newProduct);
+  return res.status(HTTP_STATUSES.CREATED_201).json(newProduct);
 });
 
 app.delete("/products/:productId", (req, res) => {
   db.products = db.products.filter(
     (p) => p.id !== Number(req.params.productId)
   );
-  res.send(204);
+  res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
 });
 
 app.put("/products/:productId", (req, res) => {
@@ -67,11 +79,21 @@ app.put("/products/:productId", (req, res) => {
     }
     return p;
   });
-  res.send(req.body);
+  res.json(req.body);
 });
 
-app.listen(port, () => {
+app.delete("/__test__/data", (req, res) => {
+  db.products = [];
+  res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
+});
+
+const server = app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
 
-module.exports = app;
+app.delete("/__test__/close-server", (req, res) => {
+  server.close();
+  res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
+});
+
+// module.exports = app;
