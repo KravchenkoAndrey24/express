@@ -1,16 +1,12 @@
 import request from "supertest";
-import { app, HTTP_STATUSES, server } from "../../src";
+import { app } from "../../src/app";
+import { HTTP_STATUSES } from "../../src/constants";
 
 describe("/product", () => {
   beforeAll(async () => {
     await request(app)
       .delete("/__test__/data")
       .expect(HTTP_STATUSES.NO_CONTENT_204);
-  });
-
-  afterAll((done) => {
-    server.close();
-    done();
   });
 
   it("Should return HTTP_STATUSES.OK_200 and empty array", async () => {

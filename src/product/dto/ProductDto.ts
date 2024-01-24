@@ -14,9 +14,3 @@ export type ProductOutDto = {
   id: number;
   name: string;
 };
-
-export type ProductDBType = {
-  id: number;
-  name: string;
-  price: number;
-};
