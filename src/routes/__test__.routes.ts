@@ -1,4 +1,3 @@
-import { DBType } from "../db/db.types";
 import { Router } from "express";
 import { HTTP_STATUSES } from "../constants";
 import { db } from "../db/db";
