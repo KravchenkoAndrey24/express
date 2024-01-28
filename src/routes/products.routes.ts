@@ -12,9 +12,10 @@ import {
   ProductOutDto,
   ProductParamsType,
   ProductInDto,
-} from "../product/dto/ProductDto";
-import { productMapper, productsMapper } from "../product/ProductMappers";
-import { productsRepository } from "../repositories/products.repository";
+} from "../product/product.dto";
+import { productMapper, productsMapper } from "../product/product.mappers";
+import { productsRepository } from "../repositories/product.repository";
+import { getValidateSchema } from "../schema-validator/schemas.utils";
 
 export const productsRouter = Router();
 
@@ -49,14 +50,11 @@ productsRouter.get(
 
 productsRouter.post(
   "/",
+  getValidateSchema("/products"),
   (
     req: TypedRequestWithBody<ProductInDto>,
     res: TypedResponse<ProductOutDto>
   ) => {
-    if (!req.body?.name) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
-    }
-
     const newProduct = productsRepository.createProduct(req.body.name);
     res.status(HTTP_STATUSES.CREATED_201).json(productMapper(newProduct));
   }
@@ -72,6 +70,7 @@ productsRouter.delete(
 
 productsRouter.put(
   "/:productId(\\d+)",
+  getValidateSchema("/products"),
   (
     req: TypedRequestWithParamsAndBody<ProductParamsType, ProductInDto>,
     res: TypedResponse<ProductOutDto>

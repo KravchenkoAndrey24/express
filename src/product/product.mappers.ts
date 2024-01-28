@@ -1,6 +1,6 @@
 import { ProductDBType } from "../db/db.types";
 import { mapObject } from "../utils";
-import { ProductOutDto } from "./dto/ProductDto";
+import { ProductOutDto } from "./product.dto";
 
 export const productMapper = (dbProduct: ProductDBType): ProductOutDto =>
   mapObject(dbProduct, ["id", "name"]);

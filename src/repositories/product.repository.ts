@@ -1,6 +1,6 @@
 import { db } from "../db/db";
 import { ProductDBType } from "../db/db.types";
-import { ProductInDto } from "../product/dto/ProductDto";
+import { ProductInDto } from "../product/product.dto";
 
 export const productsRepository = {
   findProducts: (term?: string) => {
