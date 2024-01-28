@@ -1,5 +1,5 @@
-import { RequestHandler } from "express";
-import { typedSchemas } from "./schemas";
+import { RequestHandler } from 'express';
+import { typedSchemas } from './schemas';
 
 interface ValidationError {
   message: string;
@@ -19,7 +19,7 @@ interface CustomError {
   error: string;
 }
 
-const supportedMethods = ["post", "put", "patch", "delete"];
+const supportedMethods = ['post', 'put', 'patch', 'delete'];
 
 const validationOptions = {
   abortEarly: false,
@@ -27,10 +27,7 @@ const validationOptions = {
   stripUnknown: false,
 };
 
-export const schemaValidator = (
-  path: string,
-  useJoiError = true
-): RequestHandler => {
+export const schemaValidator = (path: string, useJoiError = true): RequestHandler => {
   const schema = typedSchemas[path];
 
   if (!schema) {
@@ -48,16 +45,16 @@ export const schemaValidator = (
 
     if (error) {
       const customError: CustomError = {
-        status: "failed",
-        error: "Invalid request. Please review request and try again.",
+        status: 'failed',
+        error: 'Invalid request. Please review request and try again.',
       };
 
       const joiError: JoiError = {
-        status: "failed",
+        status: 'failed',
         error: {
           original: error._original,
           details: error.details.map(({ message, type }: ValidationError) => ({
-            message: message.replace(/['"]/g, ""),
+            message: message.replace(/['"]/g, ''),
             type,
           })),
         },

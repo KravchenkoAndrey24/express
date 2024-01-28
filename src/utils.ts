@@ -1,7 +1,4 @@
-export const mapObject = <T extends object, U>(
-  inputObject: T,
-  outputKeys: (keyof T & keyof U)[]
-): U => {
+export const mapObject = <T extends object, U>(inputObject: T, outputKeys: (keyof T & keyof U)[]): U => {
   const result = {} as U;
   outputKeys.forEach((key) => {
     if ((key as string) in inputObject) {
