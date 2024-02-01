@@ -36,7 +36,7 @@ productsRouter.post(
   '/',
   getValidateSchema('/products'),
   async (req: TypedRequestWithBody<ProductInDto>, res: TypedResponse<ProductOutDto>) => {
-    const newProduct = await productsRepository.createProduct(req.body.name);
+    const newProduct = await productsRepository.createProduct(req.body);
     res.status(HTTP_STATUSES.CREATED_201).json(productMapper(newProduct));
   },
 );

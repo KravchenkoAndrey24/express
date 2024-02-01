@@ -9,9 +9,11 @@ export type ProductQueryType = {
 export type ProductInDto = {
   name: string;
   price?: number;
+  totalPrice?: number;
 };
 
 export type ProductOutDto = {
   id: number;
   name: string;
+  totalPrice: number;
 };
