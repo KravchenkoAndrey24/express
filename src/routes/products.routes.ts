@@ -14,15 +14,15 @@ import { getValidateSchema } from '../schema-validator/schemas.utils';
 
 export const productsRouter = Router();
 
-productsRouter.get('/', (req: TypedRequestWithQuery<ProductQueryType>, res: TypedResponse<ProductOutDto[]>) => {
-  const foundProducts = productsRepository.findProducts(req.query?.name);
+productsRouter.get('/', async (req: TypedRequestWithQuery<ProductQueryType>, res: TypedResponse<ProductOutDto[]>) => {
+  const foundProducts = await productsRepository.findProducts(req.query?.name);
   res.json(productsMapper(foundProducts));
 });
 
 productsRouter.get(
   '/:productId(\\d+)',
-  (req: TypedRequestWithParams<ProductParamsType>, res: TypedResponse<ProductOutDto>) => {
-    const foundProduct = productsRepository.findProductById(Number(req.params.productId));
+  async (req: TypedRequestWithParams<ProductParamsType>, res: TypedResponse<ProductOutDto>) => {
+    const foundProduct = await productsRepository.findProductById(Number(req.params.productId));
 
     if (!foundProduct) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
@@ -35,22 +35,22 @@ productsRouter.get(
 productsRouter.post(
   '/',
   getValidateSchema('/products'),
-  (req: TypedRequestWithBody<ProductInDto>, res: TypedResponse<ProductOutDto>) => {
-    const newProduct = productsRepository.createProduct(req.body.name);
+  async (req: TypedRequestWithBody<ProductInDto>, res: TypedResponse<ProductOutDto>) => {
+    const newProduct = await productsRepository.createProduct(req.body.name);
     res.status(HTTP_STATUSES.CREATED_201).json(productMapper(newProduct));
   },
 );
 
-productsRouter.delete('/:productId(\\d+)', (req: TypedRequestWithParams<ProductParamsType>, res) => {
-  productsRepository.deleteProductById(Number(req.params.productId));
+productsRouter.delete('/:productId(\\d+)', async (req: TypedRequestWithParams<ProductParamsType>, res) => {
+  await productsRepository.deleteProductById(Number(req.params.productId));
   res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
 });
 
 productsRouter.put(
   '/:productId(\\d+)',
   getValidateSchema('/products'),
-  (req: TypedRequestWithParamsAndBody<ProductParamsType, ProductInDto>, res: TypedResponse<ProductOutDto>) => {
-    const updateProduct = productsRepository.updateProduct(Number(req.params.productId), req.body);
+  async (req: TypedRequestWithParamsAndBody<ProductParamsType, ProductInDto>, res: TypedResponse<ProductOutDto>) => {
+    const updateProduct = await productsRepository.updateProduct(Number(req.params.productId), req.body);
 
     if (!updateProduct) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);

@@ -1,41 +1,22 @@
-import { db } from '../db/db';
-import { ProductDBType } from '../db/db.types';
+import { ProductDBType } from '../db.types';
+import { prisma } from '../prisma.client';
 import { ProductInDto } from '../product/product.dto';
 
 export const productsRepository = {
-  findProducts: (term?: string) => {
-    if (term) {
-      return db.products.filter((p) => p.name.includes(term));
-    }
-    return db.products;
+  findProducts: async (term?: string): Promise<ProductDBType[]> => {
+    return await prisma.product.findMany({ where: { name: { contains: term } } });
   },
-  findProductById: (id: number) => {
-    return db.products.find((p) => p.id === id) || null;
+  findProductById: async (id: number): Promise<ProductDBType | null> => {
+    return (await prisma.product.findUnique({ where: { id } })) ?? null;
   },
-  createProduct: (name: string) => {
-    const newProduct: ProductDBType = {
-      id: new Date().getTime(),
-      name,
-      price: 0,
-    };
-    db.products.push(newProduct);
-    return newProduct;
+  createProduct: async (name: string): Promise<ProductDBType> => {
+    return prisma.product.create({ data: { name, price: 0 } });
   },
-  deleteProductById: (id: number) => {
-    db.products = db.products.filter((p) => p.id !== id);
-    return;
+  deleteProductById: async (id: number): Promise<null> => {
+    await prisma.product.delete({ where: { id } });
+    return null;
   },
-  updateProduct: (id: number, product: ProductInDto): ProductDBType | null => {
-    let updatedProduct: ProductDBType | null = null;
-
-    db.products = db.products.map((p) => {
-      if (p.id === id) {
-        updatedProduct = { ...p, ...product, id };
-        return updatedProduct;
-      }
-      return p;
-    });
-
-    return updatedProduct || null;
+  updateProduct: async (id: number, product: ProductInDto): Promise<ProductDBType | null> => {
+    return prisma.product.update({ where: { id }, data: { name: product.name, price: product?.price || 0 } });
   },
 };

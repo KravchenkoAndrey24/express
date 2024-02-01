@@ -8,6 +8,7 @@ export type ProductQueryType = {
 
 export type ProductInDto = {
   name: string;
+  price?: number;
 };
 
 export type ProductOutDto = {

@@ -1,4 +1,4 @@
-import { ProductDBType } from '../db/db.types';
+import { ProductDBType } from '../db.types';
 import { mapObject } from '../utils';
 import { ProductOutDto } from './product.dto';
 

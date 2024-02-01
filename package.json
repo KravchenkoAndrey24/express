@@ -5,12 +5,17 @@
   "scripts": {
     "dev": "nodemon src/index.ts",
     "debug": "nodemon --exec \"node --inspect-brk=0.0.0.0:9229 --require ts-node/register src/index.ts\"",
-    "build": "npm run test && npm run lint && ./node_modules/typescript/bin/tsc",
+    "build": "npm run lint && npm run prisma:deploy && ./node_modules/typescript/bin/tsc",
     "start": "node dist/index.js",
-    "test": "jest",
-    "lint": "eslint src --fix"
+    "test": "cross-env NODE_ENV=test jest --testTimeout=10000",
+    "lint": "eslint src --fix",
+    "prisma:dev": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
+    "prisma:reset": "prisma migrate reset",
+    "prisma:generate": "prisma generate"
   },
   "dependencies": {
+    "@prisma/client": "^5.8.1",
     "@types/jest": "^29.5.11",
     "@types/supertest": "^6.0.2",
     "cookie-parser": "~1.4.4",
@@ -21,15 +26,19 @@
     "jest": "^29.7.0",
     "joi": "^17.12.0",
     "morgan": "~1.9.1",
+    "pg": "^8.11.3",
+    "prisma": "^5.8.1",
     "supertest": "^6.3.4",
     "ts-jest": "^29.1.2"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.11.5",
+    "@types/pg": "^8.11.0",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
     "babel-eslint": "^10.1.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
