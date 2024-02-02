@@ -1,8 +1,8 @@
+import { PrismaClient } from '@prisma/client';
 import { ProductDBType } from '../db.types';
-import { prisma } from '../prisma.client';
 import { ProductInDto } from '../product/product.dto';
 
-export const productsRepository = {
+export const getProductsRepository = (prisma: PrismaClient) => ({
   findProducts: async (term?: string): Promise<ProductDBType[]> => {
     return await prisma.product.findMany({ where: { name: { contains: term } } });
   },
@@ -19,4 +19,4 @@ export const productsRepository = {
   updateProduct: async (id: number, data: ProductInDto): Promise<ProductDBType | null> => {
     return prisma.product.update({ where: { id }, data });
   },
-};
+});

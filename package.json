@@ -7,12 +7,14 @@
     "debug": "nodemon --exec \"node --inspect-brk=0.0.0.0:9229 --require ts-node/register src/index.ts\"",
     "build": "npm run lint && npm run prisma:deploy && ./node_modules/typescript/bin/tsc",
     "start": "node dist/index.js",
-    "test": "cross-env NODE_ENV=test jest --testTimeout=10000",
+    "test": "npm run prisma:reset:force && npm run prisma:push:force && jest --testTimeout=10000",
     "lint": "eslint src --fix",
     "prisma:dev": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
     "prisma:reset": "prisma migrate reset",
-    "prisma:generate": "prisma generate"
+    "prisma:generate": "prisma generate",
+    "prisma:reset:force": "dotenv -e .env.test -- prisma migrate reset -f --skip-generate",
+    "prisma:push:force": "dotenv -e .env.test -- prisma db push --skip-generate --force-reset"
   },
   "dependencies": {
     "@prisma/client": "^5.9.1",
@@ -38,6 +40,8 @@
     "@typescript-eslint/parser": "^6.19.1",
     "babel-eslint": "^10.1.0",
     "cross-env": "^7.0.3",
+    "dotenv": "^16.4.1",
+    "dotenv-cli": "^7.3.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",

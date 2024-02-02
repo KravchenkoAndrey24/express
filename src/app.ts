@@ -1,17 +1,14 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { productsRouter } from './routes/products.routes';
-import { prisma } from './prisma.client';
-// import { testsRouter } from './routes/__test__.routes';
+import { getProductsRouter } from './routes/products.routes';
+import { connentToPrisma } from './prisma.client';
 
-export const app = express();
+export const runApp = async () => {
+  const prisma = await connentToPrisma();
+  const app = express();
 
-app.use(bodyParser.json());
+  app.use(bodyParser.json());
+  app.use('/products', getProductsRouter(prisma));
 
-app.use('/products', productsRouter);
-// app.use('/__test__', testsRouter);
-
-app.use(async (req, res, next) => {
-  await prisma.$disconnect();
-  next();
-});
+  return app;
+};
