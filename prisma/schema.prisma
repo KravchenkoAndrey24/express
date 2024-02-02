@@ -11,5 +11,6 @@ model Product {
   id    Int      @id @default(autoincrement())
   name  String   @db.VarChar(255)
   price Int      @default(0)
+  count Int      @default(0)
   totalPrice Int      @default(0)
 }
