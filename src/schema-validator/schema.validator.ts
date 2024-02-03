@@ -1,5 +1,6 @@
 import { RequestHandler } from 'express';
 import { typedSchemas } from './schemas';
+import { HTTP_STATUSES } from '../constants';
 
 interface ValidationError {
   message: string;
@@ -60,7 +61,7 @@ export const schemaValidator = (path: string, useJoiError = true): RequestHandle
         },
       };
 
-      return res.status(422).json(useJoiError ? joiError : customError);
+      return res.status(HTTP_STATUSES.BAD_REQUEST_400).json(useJoiError ? joiError : customError);
     }
 
     // validation successful
