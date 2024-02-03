@@ -15,7 +15,7 @@
     "prisma:generate": "prisma generate",
     "prisma:reset:force": "dotenv -e .env.test -- prisma migrate reset -f --skip-generate",
     "prisma:push:force": "dotenv -e .env.test -- prisma db push --skip-generate --force-reset",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "dependencies": {
     "@prisma/client": "^5.9.1",
@@ -54,11 +54,5 @@
     "prisma": "^5.9.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint && npm run test",
-      "pre-push": "npm run lint && npm run test && npm run build"
-    }
   }
 }
