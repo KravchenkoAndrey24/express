@@ -8,5 +8,5 @@
     "strict": true,
     "skipLibCheck": true,
   },
-  "exclude": ["src/**/*.test.ts", "__test__/**/*.test.ts"],
+  "exclude": ["src/**/*.test.ts", "__test__/**/*.ts", ".husky/**/*.*"],
 }
