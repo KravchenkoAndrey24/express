@@ -14,3 +14,8 @@ model Product {
   count Int      @default(0)
   totalPrice Int      @default(0)
 }
+
+model User {
+  id    Int      @id @default(autoincrement())
+  login  String   @db.VarChar(50) @unique
+}

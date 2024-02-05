@@ -12,10 +12,19 @@ import { productMapper, productsMapper } from '../product/product.mappers';
 import { getProductsRepository } from '../repositories/product.repository';
 import { getValidateSchema } from '../schema-validator/schemas.utils';
 import { PrismaClient } from '@prisma/client';
+import { MiddlewareProtectedRouteType } from '../auth/auth.config';
 
-export const getProductsRouter = (prisma: PrismaClient) => {
+export const getProductsRouter = ({
+  prisma,
+  protectedRoute,
+}: {
+  prisma: PrismaClient;
+  protectedRoute: MiddlewareProtectedRouteType;
+}) => {
   const productsRouter = Router();
   const productsRepository = getProductsRepository(prisma);
+
+  productsRouter.use(protectedRoute);
 
   productsRouter.get('/', async (req: TypedRequestWithQuery<ProductQueryType>, res: TypedResponse<ProductOutDto[]>) => {
     const foundProducts = await productsRepository.findProducts(req.query?.name);
