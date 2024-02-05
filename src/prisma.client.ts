@@ -1,4 +1,4 @@
-import { PrismaClient } from './../node_modules/@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
 
 export const connentToPrisma = async () => {
