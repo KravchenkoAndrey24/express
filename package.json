@@ -15,7 +15,7 @@
     "prisma:generate": "prisma generate",
     "prisma:reset:force": "dotenv -e .env.test -- prisma migrate reset -f --skip-generate",
     "prisma:push:force": "dotenv -e .env.test -- prisma db push --skip-generate --force-reset",
-    "prepare": "husky || true"
+    "prepare": "husky install"
   },
   "dependencies": {
     "@prisma/client": "^5.9.1",
