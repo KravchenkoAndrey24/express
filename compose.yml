@@ -1,0 +1,26 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - ${PORT}:${PORT}
+  postgredb:
+    image: postgres
+    restart: always
+    container_name: postgredb
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - HOSTNAME=${DB_HOSTNAME}
+      - PORT=${DB_PORT}
+      - DATABASE=${DATABASE}
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    volumes:
+      - postgredb-data:/var/lib/postgresql/data
+
+volumes:
+  postgredb-data:
