@@ -17,12 +17,6 @@
     "prisma:push:force": "dotenv -e .env.test -- prisma db push --skip-generate --force-reset",
     "prepare": "husky"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint-staged",
-      "pre-push": "npm run test"
-    }
-  },
   "dependencies": {
     "@prisma/client": "^5.9.1",
     "@types/jest": "^29.5.11",
@@ -61,13 +55,5 @@
     "prisma": "^5.9.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
-  },
-  "lint-staged": {
-    "*.{js,ts,tsx}": [
-      "eslint --quiet --fix"
-    ],
-    "*.{json,md,html}": [
-      "prettier --write"
-    ]
   }
 }
