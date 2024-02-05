@@ -17,6 +17,12 @@
     "prisma:push:force": "dotenv -e .env.test -- prisma db push --skip-generate --force-reset",
     "prepare": "husky install"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm test"
+    }
+  },
   "dependencies": {
     "@prisma/client": "^5.9.1",
     "@types/jest": "^29.5.11",
@@ -63,11 +69,5 @@
     "*.{json,md,html}": [
       "prettier --write"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "npm test"
-    }
   }
 }
