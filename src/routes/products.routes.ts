@@ -12,6 +12,7 @@ import { productMapper, productsMapper } from '../product/product.mappers';
 import { getValidateSchema } from '../schema-validator/schemas.utils';
 import { productsRepository } from '../repositories/product.repository';
 import { protectedRoute } from '../auth/auth.config';
+import { getValidAPIError } from '../errors.utils';
 
 export const productsRouter = Router();
 
@@ -28,7 +29,9 @@ productsRouter.get(
     const foundProduct = await productsRepository.findProductById(Number(req.params.productId));
 
     if (!foundProduct) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
+      return res
+        .status(HTTP_STATUSES.NOT_FOUND_404)
+        .json(getValidAPIError({ field: 'product', message: 'Product not found' }));
     }
 
     res.json(productMapper(foundProduct));
@@ -56,7 +59,9 @@ productsRouter.put(
     const updateProduct = await productsRepository.updateProduct(Number(req.params.productId), req.body);
 
     if (!updateProduct) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
+      return res
+        .status(HTTP_STATUSES.NOT_FOUND_404)
+        .json(getValidAPIError({ field: 'product', message: 'Product not found' }));
     }
 
     res.status(HTTP_STATUSES.CREATED_201).json(productMapper(updateProduct));

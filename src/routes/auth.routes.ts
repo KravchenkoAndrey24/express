@@ -18,7 +18,7 @@ authRouter.post(
     const token = jwt.sign({ login: req.body.login }, process.env.JWT_SECRET as string);
 
     if (!foundUser) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
+      return res.status(HTTP_STATUSES.NOT_FOUND_404).json(getValidAPIError({ field: '', message: 'User not found' }));
     }
 
     res.status(HTTP_STATUSES.OK_200).json({ ...foundUser, token });
