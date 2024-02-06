@@ -10,7 +10,7 @@ import { getValidAPIError } from '../errors.utils';
 
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: 'secret',
+  secretOrKey: process.env.JWT_SECRET as string,
 };
 
 export const JWTpassport = passport.use(

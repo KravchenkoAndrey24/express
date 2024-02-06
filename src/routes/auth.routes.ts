@@ -15,7 +15,7 @@ authRouter.post(
   getValidateSchema('/auth'),
   async (req: TypedRequestWithBody<LoginInDto>, res: TypedResponse<LoginOutDto>) => {
     const foundUser = await userRepository.findUserByLogin(req.body.login);
-    const token = jwt.sign({ login: req.body.login }, 'secret');
+    const token = jwt.sign({ login: req.body.login }, process.env.JWT_SECRET as string);
 
     if (!foundUser) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
