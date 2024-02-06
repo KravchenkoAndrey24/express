@@ -1,11 +1,11 @@
-import { PrismaClient } from '@prisma/client';
-import { UserInDto, UserOutDto } from '../auth/auth.dto';
+import prisma from '../prisma.client';
+import { UserInDto, UserOutDto } from '../user/user.dto';
 
-export const getUserRepository = (prisma: PrismaClient) => ({
+export const userRepository = {
   createUser: async (data: UserInDto): Promise<UserOutDto> => {
-    return await prisma.user.create({ data });
+    return prisma.user.create({ data });
   },
   findUserByLogin: async (login: string): Promise<UserOutDto | null> => {
-    return (await prisma.user.findUnique({ where: { login } })) ?? null;
+    return prisma.user.findUnique({ where: { login } });
   },
-});
+};

@@ -1,44 +1,41 @@
-import { PrismaClient } from '@prisma/client';
-import { MiddlewareProtectedRouteType } from '../auth/auth.config';
 import { Router } from 'express';
 import { HTTP_STATUSES } from '../constants';
 import { TypedRequestWithBody, TypedResponse } from '../router/types';
 import { getValidateSchema } from '../schema-validator/schemas.utils';
-import { LoginInDto, LoginOutDto, UserOutDto } from '../auth/auth.dto';
+import { LoginInDto, LoginOutDto } from '../auth/auth.dto';
 import jwt from 'jsonwebtoken';
-import { getUserRepository } from '../repositories/auth.repository';
+import { userRepository } from '../repositories/auth.repository';
+import { UserOutDto } from '../user/user.dto';
+import { getValidAPIError } from '../errors.utils';
 
-export const getAuthRouter = ({ prisma }: { prisma: PrismaClient; protectedRoute: MiddlewareProtectedRouteType }) => {
-  const authRouter = Router();
-  const userRepository = getUserRepository(prisma);
+export const authRouter = Router();
 
-  authRouter.post(
-    '/sign-in',
-    getValidateSchema('/auth'),
-    async (req: TypedRequestWithBody<LoginInDto>, res: TypedResponse<LoginOutDto>) => {
-      const foundUser = await userRepository.findUserByLogin(req.body.login);
-      const token = jwt.sign({ login: req.body.login }, 'secret');
+authRouter.post(
+  '/sign-in',
+  getValidateSchema('/auth'),
+  async (req: TypedRequestWithBody<LoginInDto>, res: TypedResponse<LoginOutDto>) => {
+    const foundUser = await userRepository.findUserByLogin(req.body.login);
+    const token = jwt.sign({ login: req.body.login }, 'secret');
 
-      if (!foundUser) {
-        return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
-      }
+    if (!foundUser) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
+    }
 
-      res.status(HTTP_STATUSES.OK_200).json({ ...foundUser, token });
-    },
-  );
+    res.status(HTTP_STATUSES.OK_200).json({ ...foundUser, token });
+  },
+);
 
-  authRouter.post(
-    '/sign-up',
-    getValidateSchema('/auth'),
-    async (req: TypedRequestWithBody<LoginInDto>, res: TypedResponse<UserOutDto | { message: string }>) => {
-      try {
-        const currentUser = await userRepository.createUser(req.body);
-        res.status(HTTP_STATUSES.CREATED_201).json(currentUser);
-      } catch {
-        res.status(HTTP_STATUSES.BAD_REQUEST_400).json({ message: 'User with this login already exists' });
-      }
-    },
-  );
-
-  return authRouter;
-};
+authRouter.post(
+  '/sign-up',
+  getValidateSchema('/auth'),
+  async (req: TypedRequestWithBody<LoginInDto>, res: TypedResponse<UserOutDto>) => {
+    try {
+      const currentUser = await userRepository.createUser(req.body);
+      res.status(HTTP_STATUSES.CREATED_201).json(currentUser);
+    } catch {
+      res
+        .status(HTTP_STATUSES.BAD_REQUEST_400)
+        .json(getValidAPIError({ field: 'login', message: 'User with this login already exists' }));
+    }
+  },
+);

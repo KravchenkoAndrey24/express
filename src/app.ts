@@ -1,21 +1,20 @@
+import prisma from './prisma.client';
 import express from 'express';
 import bodyParser from 'body-parser';
-import { getProductsRouter } from './routes/products.routes';
-import { connentToPrisma } from './prisma.client';
-import { getJWTpassport } from './auth/auth.config';
-import { getAuthRouter } from './routes/auth.routes';
+import { productsRouter } from './routes/products.routes';
+import { JWTpassport } from './auth/auth.config';
+import { authRouter } from './routes/auth.routes';
 
 export const runApp = async () => {
-  const prisma = await connentToPrisma();
   const app = express();
 
-  const { JWTpassport, protectedRoute } = getJWTpassport(prisma);
+  await prisma.$connect();
 
   app.use(bodyParser.json());
   app.use(JWTpassport.initialize());
 
-  app.use('/auth', getAuthRouter({ prisma, protectedRoute }));
-  app.use('/products', getProductsRouter({ prisma, protectedRoute }));
+  app.use('/auth', authRouter);
+  app.use('/products', productsRouter);
 
   return app;
 };

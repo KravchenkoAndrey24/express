@@ -3,21 +3,13 @@ import { typedSchemas } from './schemas';
 import { HTTP_STATUSES } from '../constants';
 
 interface ValidationError {
+  field: string;
   message: string;
-  type: string;
 }
 
-interface JoiError {
+export interface JoiError {
   status: string;
-  error: {
-    original: unknown;
-    details: ValidationError[];
-  };
-}
-
-interface CustomError {
-  status: string;
-  error: string;
+  errors: ValidationError[];
 }
 
 const supportedMethods = ['post', 'put', 'patch', 'delete'];
@@ -45,20 +37,22 @@ export const schemaValidator = (path: string, useJoiError = true): RequestHandle
     const { error, value } = schema.validate(req.body, validationOptions);
 
     if (error) {
-      const customError: CustomError = {
+      const customError: JoiError = {
         status: 'failed',
-        error: 'Invalid request. Please review request and try again.',
+        errors: [
+          {
+            field: '',
+            message: 'Invalid request. Please review request and try again.',
+          },
+        ],
       };
 
       const joiError: JoiError = {
         status: 'failed',
-        error: {
-          original: error._original,
-          details: error.details.map(({ message, type }: ValidationError) => ({
-            message: message.replace(/['"]/g, ''),
-            type,
-          })),
-        },
+        errors: error.details.map(({ message, context }) => ({
+          message: message.replace(/['"]/g, ''),
+          field: context?.key || '',
+        })),
       };
 
       return res.status(HTTP_STATUSES.BAD_REQUEST_400).json(useJoiError ? joiError : customError);
