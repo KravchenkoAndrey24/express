@@ -1,8 +1,9 @@
+import { AuthInDto } from '../src/auth/auth.dto';
 import { requestTestApp } from './setupTests';
 
-// TODO: update it
-const userCredentials = {
+const userCredentials: AuthInDto = {
   login: 'TestLogin',
+  password: 'TestPassword',
 };
 
 export const signUpUser = async () => {

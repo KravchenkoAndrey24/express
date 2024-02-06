@@ -5,7 +5,7 @@ import { HTTP_STATUSES } from '../constants';
 import { userRepository } from '../repositories/auth.repository';
 import { UserOutDto } from '../user/user.dto';
 import { MiddlewareRouteType } from '../router/types';
-import { LoginInDto } from './auth.dto';
+import { AuthInDto } from './auth.dto';
 import { getValidAPIError } from '../errors.utils';
 
 const jwtOptions = {
@@ -14,8 +14,8 @@ const jwtOptions = {
 };
 
 export const JWTpassport = passport.use(
-  new Strategy(jwtOptions, async (jwtPayload: LoginInDto, done: VerifiedCallback) => {
-    const user = await userRepository.findUserByLogin(jwtPayload.login);
+  new Strategy(jwtOptions, async (jwtPayload: AuthInDto, done: VerifiedCallback) => {
+    const user = await userRepository.findUserForLogin(jwtPayload);
     if (user?.login) {
       done(null, user);
     } else {

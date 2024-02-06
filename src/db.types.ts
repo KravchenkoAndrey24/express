@@ -5,6 +5,15 @@ export type ProductDBType = {
   totalPrice: number;
 };
 
+export type UserDBType = {
+  id: number;
+  login: string;
+  createdAt: Date;
+  updatedAt: Date;
+  password: string;
+};
+
 export type DBType = {
   products: ProductDBType[];
+  users: UserDBType[];
 };

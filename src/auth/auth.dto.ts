@@ -1,8 +1,4 @@
-export type LoginInDto = {
+export type AuthInDto = {
   login: string;
-};
-
-export type LoginOutDto = {
-  login: string;
-  token: string;
+  password: string;
 };

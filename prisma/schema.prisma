@@ -16,6 +16,9 @@ model Product {
 }
 
 model User {
-  id    Int      @id @default(autoincrement())
-  login  String   @db.VarChar(50) @unique
+  id        Int       @id @default(autoincrement())
+  login     String    @db.VarChar(50) @unique
+  createdAt DateTime  @default(now()) @map("created_at") 
+  updatedAt DateTime  @updatedAt @map("updated_at") 
+  password  String    @db.VarChar(64)
 }
