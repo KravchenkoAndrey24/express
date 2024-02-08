@@ -9,7 +9,7 @@ import AppDataSource from './typeOrm.config';
 export const runApp = async () => {
   const app = express();
 
-  await AppDataSource.initialize();
+  const dbConnection = await AppDataSource.initialize();
 
   app.use(bodyParser.json());
   app.use(JWTpassport.initialize());
@@ -17,5 +17,8 @@ export const runApp = async () => {
   app.use('/auth', authRouter);
   app.use('/products', productsRouter);
 
-  return app;
+  return {
+    app,
+    dbConnection,
+  };
 };

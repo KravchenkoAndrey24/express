@@ -4,7 +4,9 @@ import { DataSourceOptions } from 'typeorm';
 import { User } from './entities/User.entity';
 import { Product } from './entities/Product.entity';
 
-dotenv.config();
+const isTestEnvironment = process.env.NODE_ENV === 'test';
+
+dotenv.config({ path: isTestEnvironment ? '.env.test' : '.env' });
 
 export const typeOrmConfig: DataSourceOptions = {
   type: 'postgres',
