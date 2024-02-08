@@ -17,7 +17,7 @@ export const typeOrmConfig: DataSourceOptions = {
   subscribers: [`${__dirname}/'src/subscriber/**/*{.ts,.js}`],
   migrationsTableName: 'migrations',
   logging: false,
-  ssl: true,
+  ssl: process.env.CONNECT_SSL === 'false',
   synchronize: false,
 };
 
