@@ -4,7 +4,7 @@ import { TypedRequestWithBody, TypedResponse } from '../router/types';
 import { getValidateSchema } from '../schema-validator/schemas.utils';
 import { AuthInDto } from '../auth/auth.dto';
 import jwt from 'jsonwebtoken';
-import { userRepository } from '../repositories/auth.repository';
+import { userRepository } from '../repositories/user.repository';
 import { UserOutDto } from '../user/user.dto';
 import { getValidAPIError } from '../errors.utils';
 import { sha256String } from '../crypro.utils';

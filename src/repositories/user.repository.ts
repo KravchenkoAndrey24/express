@@ -1,15 +1,18 @@
 import { AuthInDto } from '../auth/auth.dto';
 import { sha256String } from '../crypro.utils';
-import prisma from '../prisma.client';
+import { User } from '../entities/User.entity';
+import AppDataSource from '../typeOrm.config';
 import { UserInDto, UserOutDto } from '../user/user.dto';
 import { userDBMapper } from '../user/user.mappers';
 
+const getUserDBRepository = () => AppDataSource.getRepository(User);
+
 export const userRepository = {
   createUser: async (data: UserInDto): Promise<UserOutDto> => {
-    return userDBMapper(await prisma.user.create({ data }));
+    return userDBMapper(await getUserDBRepository().save(data));
   },
   findUserForLogin: async (data: AuthInDto): Promise<UserOutDto | null> => {
-    const foundUser = await prisma.user.findUnique({
+    const foundUser = await getUserDBRepository().findOne({
       where: { login: data.login, password: sha256String(data.password) },
     });
     if (!foundUser) {

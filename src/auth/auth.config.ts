@@ -1,8 +1,8 @@
 import passport from 'passport';
-import { Strategy, ExtractJwt, VerifiedCallback } from 'passport-jwt';
+import { ExtractJwt, Strategy, VerifiedCallback } from 'passport-jwt';
 import { NextFunction, Request, Response } from 'express';
 import { HTTP_STATUSES } from '../constants';
-import { userRepository } from '../repositories/auth.repository';
+import { userRepository } from '../repositories/user.repository';
 import { UserOutDto } from '../user/user.dto';
 import { MiddlewareRouteType } from '../router/types';
 import { AuthInDto } from './auth.dto';

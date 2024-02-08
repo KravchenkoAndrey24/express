@@ -10,7 +10,7 @@ import {
 import { ProductQueryType, ProductOutDto, ProductParamsType, ProductInDto } from '../product/product.dto';
 import { productMapper, productsMapper } from '../product/product.mappers';
 import { getValidateSchema } from '../schema-validator/schemas.utils';
-import { productsRepository } from '../repositories/product.repository';
+import { productRepository } from '../repositories/product.repository';
 import { protectedRoute } from '../auth/auth.config';
 import { getValidAPIError } from '../errors.utils';
 
@@ -19,14 +19,14 @@ export const productsRouter = Router();
 productsRouter.use(protectedRoute);
 
 productsRouter.get('/', async (req: TypedRequestWithQuery<ProductQueryType>, res: TypedResponse<ProductOutDto[]>) => {
-  const foundProducts = await productsRepository.findProducts(req.query?.name);
+  const foundProducts = await productRepository.findProducts(req.query?.name);
   res.json(productsMapper(foundProducts));
 });
 
 productsRouter.get(
   '/:productId(\\d+)',
   async (req: TypedRequestWithParams<ProductParamsType>, res: TypedResponse<ProductOutDto>) => {
-    const foundProduct = await productsRepository.findProductById(Number(req.params.productId));
+    const foundProduct = await productRepository.findProductById(Number(req.params.productId));
 
     if (!foundProduct) {
       return res
@@ -42,13 +42,13 @@ productsRouter.post(
   '/',
   getValidateSchema('/products'),
   async (req: TypedRequestWithBody<ProductInDto>, res: TypedResponse<ProductOutDto>) => {
-    const newProduct = await productsRepository.createProduct(req.body);
+    const newProduct = await productRepository.createProduct(req.body);
     res.status(HTTP_STATUSES.CREATED_201).json(productMapper(newProduct));
   },
 );
 
 productsRouter.delete('/:productId(\\d+)', async (req: TypedRequestWithParams<ProductParamsType>, res) => {
-  await productsRepository.deleteProductById(Number(req.params.productId));
+  await productRepository.deleteProductById(Number(req.params.productId));
   res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
 });
 
@@ -56,7 +56,7 @@ productsRouter.put(
   '/:productId(\\d+)',
   getValidateSchema('/products'),
   async (req: TypedRequestWithParamsAndBody<ProductParamsType, ProductInDto>, res: TypedResponse<ProductOutDto>) => {
-    const updateProduct = await productsRepository.updateProduct(Number(req.params.productId), req.body);
+    const updateProduct = await productRepository.updateProduct(Number(req.params.productId), req.body);
 
     if (!updateProduct) {
       return res

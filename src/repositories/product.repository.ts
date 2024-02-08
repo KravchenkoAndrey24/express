@@ -1,21 +1,25 @@
 import { ProductDBType } from '../db.types';
+import { Product } from '../entities/Product.entity';
 import { ProductInDto } from '../product/product.dto';
-import prisma from '../prisma.client';
+import AppDataSource from '../typeOrm.config';
 
-export const productsRepository = {
+const getProductDBRepository = () => AppDataSource.getRepository(Product);
+
+export const productRepository = {
   findProducts: async (term?: string): Promise<ProductDBType[]> => {
-    return prisma.product.findMany({ where: { name: { contains: term } } });
+    return getProductDBRepository().find({ where: { name: term } });
   },
   findProductById: async (id: number): Promise<ProductDBType | null> => {
-    return prisma.product.findUnique({ where: { id } });
+    return getProductDBRepository().findOne({ where: { id } });
   },
   createProduct: async (data: ProductInDto): Promise<ProductDBType> => {
-    return prisma.product.create({ data });
+    return getProductDBRepository().save(data);
   },
-  deleteProductById: async (id: number): Promise<ProductDBType> => {
-    return prisma.product.delete({ where: { id } });
+  deleteProductById: async (id: number): Promise<void> => {
+    await getProductDBRepository().delete(id);
   },
   updateProduct: async (id: number, data: ProductInDto): Promise<ProductDBType | null> => {
-    return prisma.product.update({ where: { id }, data });
+    await getProductDBRepository().update(id, data);
+    return getProductDBRepository().findOne({ where: { id } });
   },
 };

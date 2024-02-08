@@ -7,6 +7,10 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
   },
-  "exclude": ["src/**/*.test.ts", "__test__/**/*.ts", ".husky/**/*.*"],
+  "exclude": ["src/migrations/**/*.*", "src/**/*.test.ts", "__test__/**/*.ts", ".husky/**/*.*"],
 }

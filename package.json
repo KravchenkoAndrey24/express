@@ -5,20 +5,18 @@
   "scripts": {
     "dev": "nodemon src/index.ts",
     "debug": "nodemon --exec \"node --inspect-brk=0.0.0.0:9229 --require ts-node/register src/index.ts\"",
-    "build": "npm run lint && npm run prisma:deploy && ./node_modules/typescript/bin/tsc",
+    "build": "npm run lint && npm run typeorm:run-migrations && ./node_modules/typescript/bin/tsc",
     "start": "node dist/index.js",
     "test": "npm run prisma:reset:force && npm run prisma:push:force && jest -i --testTimeout=10000",
     "lint": "eslint src --fix",
-    "prisma:dev": "prisma migrate dev",
-    "prisma:deploy": "prisma migrate deploy",
-    "prisma:reset": "prisma migrate reset",
-    "prisma:generate": "prisma generate",
-    "prisma:reset:force": "dotenv -e .env.test -- prisma migrate reset -f --skip-generate",
-    "prisma:push:force": "dotenv -e .env.test -- prisma db push --skip-generate --force-reset",
-    "prepare": "husky"
+    "prepare": "husky",
+    "typeorm": "ts-node ./node_modules/typeorm/cli",
+    "typeorm:run-migrations": "npm run typeorm migration:run -- -d ./src/typeOrm.config.ts",
+    "typeorm:generate-migration": "npm run typeorm -- -d ./src/typeOrm.config.ts migration:generate ./src/migrations/$npm_config_name",
+    "typeorm:create-migration": "npm run typeorm -- migration:create ./src/migrations/$npm_config_name",
+    "typeorm:revert-migration": "npm run typeorm -- -d ./src/typeOrm.config.ts migration:revert"
   },
   "dependencies": {
-    "@prisma/client": "^5.9.1",
     "@types/jest": "^29.5.11",
     "@types/supertest": "^6.0.2",
     "cookie-parser": "~1.4.4",
@@ -34,8 +32,10 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "pg": "^8.11.3",
+    "reflect-metadata": "^0.2.1",
     "supertest": "^6.3.4",
-    "ts-jest": "^29.1.2"
+    "ts-jest": "^29.1.2",
+    "typeorm": "^0.3.20"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
@@ -60,7 +60,6 @@
     "lint-staged": "^15.2.1",
     "nodemon": "^3.0.3",
     "prettier": "^3.2.4",
-    "prisma": "^5.9.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }
