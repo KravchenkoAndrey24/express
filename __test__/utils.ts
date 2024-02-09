@@ -1,7 +1,7 @@
-import { AuthInDto } from '../src/auth/auth.dto';
+import { SignInInDto } from '../src/auth/auth.dto';
 import { requestTestApp } from './setupTests';
 
-const userCredentials: AuthInDto = {
+const userCredentials: SignInInDto = {
   login: 'TestLogin',
   password: 'TestPassword',
 };

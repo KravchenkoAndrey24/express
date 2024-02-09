@@ -13,7 +13,14 @@ export type UserDBType = {
   password: string;
 };
 
+export type SessionDBType = {
+  id: number;
+  userId: number;
+  hash: string;
+};
+
 export type DBType = {
   products: ProductDBType[];
   users: UserDBType[];
+  sessions: SessionDBType[];
 };
