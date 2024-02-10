@@ -17,7 +17,7 @@ const jwtOptions: StrategyOptionsWithoutRequest = {
 
 export const JWTpassport = passport.use(
   new Strategy(jwtOptions, async (jwtPayload: AuthInDto, done: VerifiedCallback) => {
-    const user = await userRepository.findUserByLogin(jwtPayload.login);
+    const user = await userRepository.findUserByEmail(jwtPayload.email);
     const foundSession = await sessionRepository.findSessionByHash(jwtPayload.sessionHash);
 
     if (user && foundSession) {

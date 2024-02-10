@@ -21,7 +21,7 @@ export const decodeAuthHeader = (auth?: string) => {
   try {
     return jwt.decode(auth?.slice(7) as string) as {
       sessionHash?: string;
-      login?: string;
+      email?: string;
     };
   } catch {
     return null;

@@ -1,11 +1,11 @@
 export type UserInDto = {
-  login: string;
+  email: string;
   password: string;
 };
 
 export type UserOutDto = {
   id: number;
-  login: string;
+  email: string;
   createdAt: Date;
   updatedAt: Date;
 };

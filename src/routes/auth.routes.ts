@@ -18,7 +18,7 @@ authRouter.post(
   '/sign-in',
   getValidateSchema('/auth'),
   async (req: TypedRequestWithBody<SignInInDto>, res: TypedResponse<UserOutDto & { token: string }>) => {
-    const foundUser = await userRepository.findUserForLogin(req.body);
+    const foundUser = await userRepository.findUserForEmail(req.body);
     if (!foundUser) {
       return res.status(HTTP_STATUSES.NOT_FOUND_404).json(getValidAPIError({ field: '', message: 'User not found' }));
     }
@@ -27,7 +27,7 @@ authRouter.post(
     const sessionHash = generateRandomSHA256();
     await sessionRepository.createSession({ user: foundUser, sessionHash });
 
-    const token = jwt.sign({ login: foundUser.login, sessionHash }, process.env.JWT_SECRET as string);
+    const token = jwt.sign({ email: foundUser.email, sessionHash }, process.env.JWT_SECRET as string);
     res.status(HTTP_STATUSES.OK_200).json({ ...foundUser, token });
   },
 );
@@ -42,7 +42,7 @@ authRouter.post(
     } catch (e) {
       res
         .status(HTTP_STATUSES.BAD_REQUEST_400)
-        .json(getValidAPIError({ field: 'login', message: 'User with this login already exists' }));
+        .json(getValidAPIError({ field: 'email', message: 'User with this email already exists' }));
     }
   },
 );

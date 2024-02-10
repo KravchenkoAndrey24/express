@@ -11,18 +11,18 @@ export const userRepository = {
   createUser: async (data: UserInDto): Promise<UserOutDto> => {
     return userDBMapper(await getUserDBRepository().save(data));
   },
-  findUserForLogin: async (data: SignInInDto): Promise<UserOutDto | null> => {
+  findUserForEmail: async (data: SignInInDto): Promise<UserOutDto | null> => {
     const foundUser = await getUserDBRepository().findOne({
-      where: { login: data.login, password: sha256String(data.password) },
+      where: { email: data.email, password: sha256String(data.password) },
     });
     if (!foundUser) {
       return null;
     }
     return userDBMapper(foundUser);
   },
-  findUserByLogin: async (login: string): Promise<UserOutDto | null> => {
+  findUserByEmail: async (email: string): Promise<UserOutDto | null> => {
     const foundUser = await getUserDBRepository().findOne({
-      where: { login },
+      where: { email },
     });
     if (!foundUser) {
       return null;

@@ -1,14 +1,14 @@
 export type AuthInDto = {
-  login: string;
+  email: string;
   sessionHash: string;
 };
 
 export type SignUpInDto = {
-  login: string;
+  email: string;
   password: string;
 };
 
 export type SignInInDto = {
-  login: string;
+  email: string;
   password: string;
 };
