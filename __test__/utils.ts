@@ -2,7 +2,7 @@ import { SignInInDto } from '../src/auth/auth.dto';
 import { requestTestApp } from './setupTests';
 
 const userCredentials: SignInInDto = {
-  email: 'TestEmail',
+  email: 'TestEmail@gmail.com',
   password: 'TestPassword',
 };
 
