@@ -12,13 +12,18 @@ export const sessionRepository = {
     await getSessionDBRepository().delete({ sessionHash: hash });
     return null;
   },
+  findAll: async () => {
+    return getSessionDBRepository().find();
+  },
   findSessionByHash: async (sessionHash?: string): Promise<SessionOutDto | null> => {
-    const foundSession = await getSessionDBRepository().findOne({
-      where: { sessionHash },
-    });
-    if (!foundSession) {
+    if (!sessionHash) {
       return null;
     }
-    return foundSession;
+    return (
+      (await getSessionDBRepository().findOne({
+        where: { sessionHash },
+        relations: { user: true },
+      })) || null
+    );
   },
 };

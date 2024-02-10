@@ -7,9 +7,10 @@ import jwt from 'jsonwebtoken';
 import { userRepository } from '../repositories/user.repository';
 import { UserOutDto } from '../user/user.dto';
 import { getValidAPIError } from '../errors.utils';
-import { decodeAuthHeader, generateRandomSHA256, sha256String } from '../crypro.utils';
+import { generateRandomSHA256, sha256String } from '../crypro.utils';
 import { sessionRepository } from '../repositories/session.repository';
 import { protectedRoute } from '../auth/auth.config';
+import { deleteSessionFromDBByToken } from '../auth/auth.utils';
 
 export const authRouter = Router();
 
@@ -21,6 +22,7 @@ authRouter.post(
     if (!foundUser) {
       return res.status(HTTP_STATUSES.NOT_FOUND_404).json(getValidAPIError({ field: '', message: 'User not found' }));
     }
+    await deleteSessionFromDBByToken(req?.headers?.authorization);
 
     const sessionHash = generateRandomSHA256();
     await sessionRepository.createSession({ user: foundUser, sessionHash });
@@ -50,12 +52,7 @@ authRouter.post(
   protectedRoute,
   async (req: TypedRequestWithBody<unknown>, res: TypedResponse<unknown>) => {
     try {
-      const decodedToken = decodeAuthHeader(req.headers.authorization);
-      const foundSession = await sessionRepository.findSessionByHash(decodedToken?.sessionHash);
-      if (foundSession) {
-        await sessionRepository.deleteSessionByHash(foundSession.sessionHash);
-      }
-
+      await deleteSessionFromDBByToken(req?.headers?.authorization);
       res.status(HTTP_STATUSES.NO_CONTENT_204).json();
     } catch (e) {
       res.status(HTTP_STATUSES.NO_CONTENT_204).json();
