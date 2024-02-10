@@ -8,6 +8,16 @@ export const sha256String = (value: string) => {
   return hashedValue;
 };
 
+export const randomSHA256String = (value: string) => {
+  const randomString = Math.random().toString(36).substring(2);
+  const valueWithRandom = value + randomString;
+
+  const hash = createHash('sha256');
+  hash.update(valueWithRandom);
+  const hashedValue = hash.digest('hex');
+  return hashedValue;
+};
+
 export const generateRandomSHA256 = () => {
   const hash = createHash('sha256');
   hash.update(randomBytes(16));

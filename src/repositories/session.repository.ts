@@ -1,8 +1,9 @@
 import { Session } from '../entities/Session.entity';
 import { SessionInDto, SessionOutDto } from '../session/session.dto';
 import AppDataSource from '../typeOrm.config';
+import { UserOutDto } from '../user/user.dto';
 
-const getSessionDBRepository = () => AppDataSource.getRepository(Session);
+export const getSessionDBRepository = () => AppDataSource.getRepository(Session);
 
 export const sessionRepository = {
   createSession: async (data: SessionInDto): Promise<SessionOutDto> => {
@@ -10,6 +11,10 @@ export const sessionRepository = {
   },
   deleteSessionByHash: async (hash: string): Promise<null> => {
     await getSessionDBRepository().delete({ sessionHash: hash });
+    return null;
+  },
+  deleteSessionByUser: async (user: UserOutDto): Promise<null> => {
+    await getSessionDBRepository().delete({ user });
     return null;
   },
   findAll: async () => {
