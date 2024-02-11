@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { User } from './User.entity';
 
 @Entity()
-export class ForgotPassword {
+export class TemporaryUserToken {
   @PrimaryGeneratedColumn()
   id: number;
 

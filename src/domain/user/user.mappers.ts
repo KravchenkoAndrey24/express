@@ -1,5 +1,5 @@
-import { UserDBType } from '../db.types';
-import { mapObject } from '../utils';
+import { UserDBType } from '../../db.types';
+import { mapObject } from '../../utils';
 import { UserOutDto } from './user.dto';
 
 const fieldsForMap: (keyof UserOutDto)[] = ['id', 'email', 'createdAt', 'updatedAt'];

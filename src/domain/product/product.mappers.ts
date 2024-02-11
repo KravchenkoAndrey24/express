@@ -1,5 +1,5 @@
-import { ProductDBType } from '../db.types';
-import { mapObject } from '../utils';
+import { ProductDBType } from '../../db.types';
+import { mapObject } from '../../utils';
 import { ProductOutDto } from './product.dto';
 
 const fieldsForMap: (keyof ProductOutDto)[] = ['id', 'name', 'totalPrice'];

@@ -1,17 +1,19 @@
 import { Router } from 'express';
-import { HTTP_STATUSES } from '../constants';
-import { TypedRequestWithBody, TypedResponse } from '../router/types';
-import { getValidateSchema } from '../schema-validator/schemas.utils';
-import { ForgotPasswordStep1InDto, ForgotPasswordStep2InDto, SignInInDto, SignUpInDto } from '../auth/auth.dto';
+import { HTTP_STATUSES } from '../../constants';
+import { TypedRequestWithBody, TypedResponse } from '../../router/types';
+import { getValidateSchema } from '../../schema-validator/schemas.utils';
+import { ForgotPasswordStep1InDto, ForgotPasswordStep2InDto, SignInInDto, SignUpInDto } from './auth.dto';
 import jwt from 'jsonwebtoken';
-import { userRepository } from '../repositories/user.repository';
+import { userRepository } from '../user/user.repository';
 import { UserOutDto } from '../user/user.dto';
-import { getValidAPIError } from '../errors.utils';
-import { generateRandomSHA256, sha256String } from '../crypro.utils';
-import { sessionRepository } from '../repositories/session.repository';
-import { protectedRoute } from '../auth/auth.config';
-import { deleteSessionFromDBByToken } from '../auth/auth.utils';
-import { sendEmail } from '../emails/utils';
+import { getValidAPIError } from '../../errors.utils';
+import { generateRandomSHA256, sha256String } from '../../crypro.utils';
+import { sessionRepository } from '../session/session.repository';
+import { protectedRoute } from './auth.config';
+import { deleteSessionFromDBByToken } from './auth.utils';
+import { sendEmail } from '../../emails/utils';
+import { hasPassedHours } from '../../date.utils';
+import { temporaryUserTokenRepository } from '../temporary-user-token/temporaryUserToken.repository';
 
 export const authRouter = Router();
 
@@ -19,7 +21,10 @@ authRouter.post(
   '/sign-in',
   getValidateSchema('/auth'),
   async (req: TypedRequestWithBody<SignInInDto>, res: TypedResponse<UserOutDto & { token: string }>) => {
-    const foundUser = await userRepository.findUserForSignIn(req.body);
+    const foundUser = await userRepository.findUserForSignIn({
+      email: req.body.email,
+      password: sha256String(req.body.password),
+    });
     if (!foundUser) {
       return res.status(HTTP_STATUSES.NOT_FOUND_404).json(getValidAPIError({ field: '', message: 'User not found' }));
     }
@@ -78,7 +83,7 @@ authRouter.post(
         .json(getValidAPIError({ field: 'email', message: 'User not found' }));
     }
 
-    const { token } = await userRepository.createForgotPasswordToken(foundUser.email);
+    const { token } = await temporaryUserTokenRepository.createToken(foundUser.email);
     sendEmail({
       subject: 'Forgot password from learn-nodejs',
       text: `Secret key: ${token}`,
@@ -99,11 +104,17 @@ authRouter.post(
   '/forgot-password/step-2',
   getValidateSchema('/forgot-password-step-2'),
   async (req: TypedRequestWithBody<ForgotPasswordStep2InDto>, res: TypedResponse<unknown>) => {
-    const foundToken = await userRepository.findForgotPasswordToken(req.body.token);
+    const foundToken = await temporaryUserTokenRepository.findByToken(req.body.token);
     if (!foundToken) {
       return res
         .status(HTTP_STATUSES.BAD_REQUEST_400)
         .json(getValidAPIError({ field: 'token', message: 'Invalid token' }));
+    }
+
+    if (hasPassedHours(new Date(foundToken.createdAt), 24)) {
+      return res
+        .status(HTTP_STATUSES.BAD_REQUEST_400)
+        .json(getValidAPIError({ field: 'token', message: 'Expired token' }));
     }
 
     const updatedUser = userRepository.updatePassword({

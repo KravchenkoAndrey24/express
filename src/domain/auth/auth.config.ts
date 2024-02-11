@@ -1,13 +1,13 @@
 import passport from 'passport';
 import { ExtractJwt, Strategy, StrategyOptionsWithoutRequest, VerifiedCallback } from 'passport-jwt';
 import { NextFunction, Request, Response } from 'express';
-import { HTTP_STATUSES } from '../constants';
-import { userRepository } from '../repositories/user.repository';
+import { HTTP_STATUSES } from '../../constants';
+import { userRepository } from '../user/user.repository';
 import { UserOutDto } from '../user/user.dto';
-import { MiddlewareRouteType } from '../router/types';
+import { MiddlewareRouteType } from '../../router/types';
 import { AuthInDto } from './auth.dto';
-import { getValidAPIError } from '../errors.utils';
-import { sessionRepository } from '../repositories/session.repository';
+import { getValidAPIError } from '../../errors.utils';
+import { sessionRepository } from '../session/session.repository';
 import { deleteSessionFromDBByToken } from './auth.utils';
 
 const jwtOptions: StrategyOptionsWithoutRequest = {

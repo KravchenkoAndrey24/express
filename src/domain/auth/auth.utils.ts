@@ -1,5 +1,5 @@
-import { decodeAuthHeader } from '../crypro.utils';
-import { sessionRepository } from '../repositories/session.repository';
+import { decodeAuthHeader } from '../../crypro.utils';
+import { sessionRepository } from '../session/session.repository';
 
 export const deleteSessionFromDBByToken = async (token?: string) => {
   const decodedToken = decodeAuthHeader(token);

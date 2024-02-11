@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 import dotenv from 'dotenv';
 import { DataSourceOptions } from 'typeorm';
-import { ForgotPassword, Product, Session, User } from './entities';
+import { TemporaryUserToken, Product, Session, User } from './entities';
 
 const isTestEnvironment = process.env.NODE_ENV === 'test';
 
@@ -13,7 +13,7 @@ export const typeOrmConfig: DataSourceOptions = {
   username: process.env.USERNAME,
   password: process.env.PASSWORD,
   database: process.env.DATABASE,
-  entities: [User, Product, Session, ForgotPassword],
+  entities: [User, Product, Session, TemporaryUserToken],
   migrations: [`${__dirname}/migrations/**/*{.ts,.js}`],
   subscribers: [`${__dirname}/'src/subscriber/**/*{.ts,.js}`],
   migrationsTableName: 'migrations',

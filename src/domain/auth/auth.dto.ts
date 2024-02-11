@@ -1,5 +1,3 @@
-import { UserOutDto } from '../user/user.dto';
-
 export type AuthInDto = {
   email: string;
   sessionHash: string;
@@ -22,10 +20,5 @@ export type ForgotPasswordStep1InDto = {
 export type ForgotPasswordStep2InDto = {
   email: string;
   newPassword: string;
-  token: string;
-};
-
-export type ForgotPasswordOutDto = {
-  user: UserOutDto;
   token: string;
 };

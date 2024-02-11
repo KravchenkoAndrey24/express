@@ -1,6 +1,6 @@
 import { ObjectSchema } from 'joi';
-import { productSchema } from '../product/product.schema';
-import { authSchema, forgotPasswordStep2Schema } from '../auth/auth.schema';
+import { productSchema } from '../domain/product/product.schema';
+import { authSchema, forgotPasswordStep2Schema } from '../domain/auth/auth.schema';
 
 export const schemas = {
   '/products': productSchema,

@@ -1,4 +1,4 @@
-import { SignInInDto } from '../src/auth/auth.dto';
+import { SignInInDto } from '../src/domain/auth/auth.dto';
 import { requestTestApp } from './setupTests';
 
 const userCredentials: SignInInDto = {
