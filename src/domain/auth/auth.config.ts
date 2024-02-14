@@ -1,6 +1,5 @@
 import passport from 'passport';
 import { ExtractJwt, Strategy, StrategyOptionsWithoutRequest, VerifiedCallback } from 'passport-jwt';
-import { NextFunction, Request, Response } from 'express';
 import { HTTP_STATUSES } from '../../constants';
 import { userRepository } from '../user/user.repository';
 import { UserOutDto } from '../user/user.dto';
@@ -28,16 +27,25 @@ export const JWTpassport = passport.use(
   }),
 );
 
-export const protectedRoute: MiddlewareRouteType = (req: Request, res: Response, next: NextFunction): void => {
-  JWTpassport.authenticate('jwt', { session: false }, async (err: any, user: UserOutDto) => {
-    if (err || !user) {
-      await deleteSessionFromDBByToken(req?.headers?.authorization);
+export const protectedRoute: MiddlewareRouteType = (req, res, next): void => {
+  JWTpassport.authenticate('jwt', { session: false }, (err: any, user: UserOutDto) => {
+    if (err) {
+      return res
+        .status(HTTP_STATUSES.SERVER_ERROR_500)
+        .json(getValidAPIError({ field: '', message: 'An error occurred during authentication' }));
+    }
+    if (!user) {
+      const token = req?.headers?.authorization?.split(' ')[1];
+      if (token) {
+        deleteSessionFromDBByToken(token).catch((err) => {
+          console.error('Error deleting session from DB', err);
+        });
+      }
       return res
         .status(HTTP_STATUSES.NON_UNAUTHORIZED_401)
         .json(getValidAPIError({ field: '', message: 'Unauthorized' }));
     }
-
     req.user = user;
-    return next();
+    next();
   })(req, res, next);
 };

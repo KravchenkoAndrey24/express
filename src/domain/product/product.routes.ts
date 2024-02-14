@@ -17,51 +17,69 @@ import { getValidAPIError } from '../../errors.utils';
 export const productRouter = Router().use(protectedRoute);
 
 productRouter.get('/', async (req: TypedRequestWithQuery<ProductQueryType>, res: TypedResponse<ProductOutDto[]>) => {
-  const foundProducts = await productRepository.findProducts(req.query?.name);
-  res.json(productsMapper(foundProducts));
+  try {
+    const foundProducts = await productRepository.findProducts(req.query?.name);
+    res.json(productsMapper(foundProducts));
+  } catch {
+    res.status(HTTP_STATUSES.SERVER_ERROR_500).json(getValidAPIError({ message: 'Internal Server Error' }));
+  }
 });
 
 productRouter.get(
   '/:productId(\\d+)',
   async (req: TypedRequestWithParams<ProductParamsType>, res: TypedResponse<ProductOutDto>) => {
-    const foundProduct = await productRepository.findProductById(Number(req.params.productId));
+    try {
+      const foundProduct = await productRepository.findProductById(Number(req.params.productId));
+      if (!foundProduct) {
+        return res
+          .status(HTTP_STATUSES.NOT_FOUND_404)
+          .json(getValidAPIError({ field: 'product', message: 'Product not found' }));
+      }
 
-    if (!foundProduct) {
-      return res
-        .status(HTTP_STATUSES.NOT_FOUND_404)
-        .json(getValidAPIError({ field: 'product', message: 'Product not found' }));
+      res.json(productMapper(foundProduct));
+    } catch {
+      res.status(HTTP_STATUSES.SERVER_ERROR_500).json(getValidAPIError({ message: 'Internal Server Error' }));
     }
-
-    res.json(productMapper(foundProduct));
   },
 );
 
 productRouter.post(
   '/',
-  getValidateSchema('/products'),
+  getValidateSchema('products'),
   async (req: TypedRequestWithBody<ProductInDto>, res: TypedResponse<ProductOutDto>) => {
-    const newProduct = await productRepository.createProduct(req.body);
-    res.status(HTTP_STATUSES.CREATED_201).json(productMapper(newProduct));
+    try {
+      const newProduct = await productRepository.createProduct(req.body);
+      res.status(HTTP_STATUSES.CREATED_201).json(productMapper(newProduct));
+    } catch {
+      res.status(HTTP_STATUSES.SERVER_ERROR_500).json(getValidAPIError({ message: 'Internal Server Error' }));
+    }
   },
 );
 
 productRouter.delete('/:productId(\\d+)', async (req: TypedRequestWithParams<ProductParamsType>, res) => {
-  await productRepository.deleteProductById(Number(req.params.productId));
-  res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
+  try {
+    await productRepository.deleteProductById(Number(req.params.productId));
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
+  } catch {
+    res.status(HTTP_STATUSES.SERVER_ERROR_500).json(getValidAPIError({ message: 'Internal Server Error' }));
+  }
 });
 
 productRouter.put(
   '/:productId(\\d+)',
-  getValidateSchema('/products'),
+  getValidateSchema('products'),
   async (req: TypedRequestWithParamsAndBody<ProductParamsType, ProductInDto>, res: TypedResponse<ProductOutDto>) => {
-    const updateProduct = await productRepository.updateProduct(Number(req.params.productId), req.body);
+    try {
+      const updateProduct = await productRepository.updateProduct(Number(req.params.productId), req.body);
+      if (!updateProduct) {
+        return res
+          .status(HTTP_STATUSES.NOT_FOUND_404)
+          .json(getValidAPIError({ field: 'product', message: 'Product not found' }));
+      }
 
-    if (!updateProduct) {
-      return res
-        .status(HTTP_STATUSES.NOT_FOUND_404)
-        .json(getValidAPIError({ field: 'product', message: 'Product not found' }));
+      res.status(HTTP_STATUSES.CREATED_201).json(productMapper(updateProduct));
+    } catch {
+      res.status(HTTP_STATUSES.SERVER_ERROR_500).json(getValidAPIError({ message: 'Internal Server Error' }));
     }
-
-    res.status(HTTP_STATUSES.CREATED_201).json(productMapper(updateProduct));
   },
 );

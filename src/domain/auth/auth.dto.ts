@@ -22,3 +22,8 @@ export type ForgotPasswordStep2InDto = {
   newPassword: string;
   token: string;
 };
+
+export type AuthTokensOutDto = {
+  accessToken: string;
+  refreshToken: string;
+};

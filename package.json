@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "nodemon src/index.ts",
     "debug": "nodemon --exec \"node --inspect-brk=0.0.0.0:9229 --require ts-node/register src/index.ts\"",
-    "build": "npm run lint && npm run typeorm:run-migrations && ./node_modules/typescript/bin/tsc",
+    "build": "npm run lint && npm run test && npm run typeorm:run-migrations && ./node_modules/typescript/bin/tsc",
     "start": "node dist/index.js",
-    "test": "cross-env NODE_ENV=test npm run typeorm:drop && cross-env NODE_ENV=test npm run typeorm:sync && jest -i --testTimeout=10000",
+    "test": "jest -i --testTimeout=10000 --verbose",
     "lint": "eslint src --fix",
     "prepare": "husky",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
