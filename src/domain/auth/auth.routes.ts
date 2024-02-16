@@ -16,12 +16,13 @@ import { UserOutDto } from '../user/user.dto';
 import { getValidAPIError } from '../../errors.utils';
 import { generateRandomSHA256, sha256String } from '../../crypro.utils';
 import { sessionRepository } from '../session/session.repository';
-import { protectedRoute } from './auth.config';
+import { googleAuthRoute, protectedRoute } from './auth.config';
 import { deleteSessionFromDBByToken } from './auth.utils';
 import { sendEmail } from '../../emails/utils';
 import { hasPassedHours } from '../../date.utils';
 import { temporaryUserTokenRepository } from '../temporary-user-token/temporaryUserToken.repository';
 import { AUTH_OPTIONS } from './auth.const';
+import passport from 'passport';
 
 export const authRouter = Router();
 
@@ -177,3 +178,29 @@ authRouter.post(
     }
   },
 );
+
+authRouter.get('/google', googleAuthRoute);
+
+authRouter.get(
+  '/oauth2/success',
+  passport.authenticate('google', { failureRedirect: '/auth/oauth2/failure' }),
+  async (req: TypedRequestWithBody<unknown>, res: TypedResponse<unknown>) => {
+    const currentUser = req.user as UserOutDto;
+    const sessionHash = generateRandomSHA256();
+    await sessionRepository.createSession({ user: currentUser, sessionHash });
+
+    const accessToken = jwt.sign({ email: currentUser.email, sessionHash }, process.env.JWT_SECRET as string, {
+      expiresIn: AUTH_OPTIONS.expiresIn.access,
+    });
+
+    res.status(HTTP_STATUSES.OK_200).redirect(`${process.env.CLIENT_URL}/auth/oauth2/callback?token=${accessToken}`);
+  },
+);
+
+authRouter.get('/oauth2/callback', async (req: TypedRequestWithBody<unknown>, res: TypedResponse<unknown>) => {
+  res.json({ message: 'Success auth' });
+});
+
+authRouter.get('/oauth2/failure', async (req: TypedRequestWithBody<unknown>, res: TypedResponse<unknown>) => {
+  res.json({ message: 'Failure auth' });
+});
