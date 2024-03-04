@@ -78,7 +78,8 @@ export const processExcelFile = async (fileBuffer: Buffer, invoicingMonth: strin
       const invoiceData: InvoiceData = {
         ...allFields,
         validationErrors: validationErrors.length > 0 ? validationErrors : undefined,
-        totalInvoiceCurrency: currentTotalInvoiceCurrency || 'All necessary parameters for calculation were not passed',
+        'Total Invoice Currency':
+          currentTotalInvoiceCurrency || 'All necessary parameters for calculation were not passed',
       };
 
       invoicesData.push(invoiceData);
